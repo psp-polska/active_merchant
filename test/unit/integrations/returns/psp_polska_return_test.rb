@@ -18,6 +18,8 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
     assert recurring_start.valid?
     recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => PspPolskaConfig["ip"])
     assert recurring_status.valid?
+    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE, :ip => PspPolskaConfig["ip"])
+    assert recurring_update.valid?
     preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => PspPolskaConfig["ip"])
     assert preauth.valid?
     capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => PspPolskaConfig["ip"])
@@ -35,6 +37,8 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
     assert !recurring_start.valid?
     recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE)
     assert !recurring_status.valid?
+    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE)
+    assert !recurring_update.valid?
     preauth = Return.new(VALID_PREAUTH_RESPONSE)
     assert !preauth.valid?
     capture = Return.new(VALID_CAPTURE_RESPONSE)
@@ -42,7 +46,7 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
     recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE)
     assert !recurring_stop.valid?
   end
-  
+
   def test_valid_response_should_create_invalid_return_with_incorrect_ip
     sale = Return.new(VALID_SALE_RESPONSE, :ip => "127.0.0.1")
     assert !sale.valid?
@@ -52,6 +56,8 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
     assert !recurring_start.valid?
     recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => "127.0.0.1")
     assert !recurring_status.valid?
+    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE, :ip => "127.0.0.1")
+    assert !recurring_update.valid?
     preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => "127.0.0.1")
     assert !preauth.valid?
     capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => "127.0.0.1")
@@ -69,6 +75,8 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
     assert_equal recurring_start.calculate_checksum, Digest::MD5.hexdigest("999999991some_session_idnew1305781394TestResponse1")
     recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE)
     assert_equal recurring_status.calculate_checksum, Digest::MD5.hexdigest("9999999911234active5678TestResponse1")
+    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE)
+    assert_equal recurring_update.calculate_checksum, Digest::MD5.hexdigest("999999991123456active1306314732TestResponse1")
     preauth = Return.new(VALID_PREAUTH_RESPONSE)
     assert_equal preauth.calculate_checksum, Digest::MD5.hexdigest("999999991some_session_idaccepted1307964315TestResponse1")
     capture = Return.new(VALID_CAPTURE_RESPONSE)
@@ -90,7 +98,7 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
     get_status = Return.new(
       VALID_GET_STATUS_RESPONSE.gsub("<status>approved</status>", "<status>accepted</status>"),
       :ip => PspPolskaConfig["ip"])
-    get_status.stubs(:valid?).returns(true)   
+    get_status.stubs(:valid?).returns(true)
     assert !get_status.success?
     recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => PspPolskaConfig["ip"])
     assert recurring_start.success?

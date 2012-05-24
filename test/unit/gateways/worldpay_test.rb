@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class WorldpayTest < Test::Unit::TestCase
+  include CommStub
+
   def setup
    @gateway = WorldpayGateway.new(
       :login => 'testlogin',
@@ -32,6 +34,15 @@ class WorldpayTest < Test::Unit::TestCase
   def test_successful_purchase
     response = stub_comms do
       @gateway.purchase(@amount, @credit_card, @options)
+    end.respond_with(successful_authorize_response, successful_capture_response)
+    assert_success response
+  end
+
+  def test_purchase_passes_correct_currency
+    response = stub_comms do
+      @gateway.purchase(@amount, @credit_card, @options.merge(:currency => 'CAD'))
+    end.check_request do |endpoint, data, headers|
+      assert_match(/CAD/, data)
     end.respond_with(successful_authorize_response, successful_capture_response)
     assert_success response
   end
@@ -204,44 +215,6 @@ class WorldpayTest < Test::Unit::TestCase
     attributes.each do |attribute, value|
       assert_match %r(#{attribute}="#{value}"), m[1]
     end
-  end
-
-  class CommStub
-    def initialize(gateway, action)
-      @gateway = gateway
-      @action = action
-      @complete = false
-    end
-
-    def check_request(&block)
-      @check = block
-      self
-    end
-
-    def respond_with(*responses)
-      @complete = true
-      check = @check
-      (class << @gateway; self; end).send(:define_method, :ssl_post) do |*args|
-        check.call(*args) if check
-        (responses.size == 1 ? responses.last : responses.shift)
-      end
-      @action.call
-    end
-
-    def complete?
-      @complete
-    end
-  end
-
-  def stub_comms(gateway=@gateway, &action)
-    if @last_comm_stub
-      assert @last_comm_stub.complete?, "Tried to stub communications when there's a stub already in progress."
-    end
-    @last_comm_stub = CommStub.new(gateway, action)
-  end
-
-  def teardown
-    assert(@last_comm_stub.complete?) if @last_comm_stub
   end
 
   private

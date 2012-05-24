@@ -56,19 +56,19 @@ class ActiveSupport::TestCase
     <redirect-url>https://sandbox.psp-polska.pl/transaction/credit_card/sale/639923858</redirect-url>
   </response>"
 
-  VALID_PREAUTH_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?> 
-  <response> 
-    <action>preauth</action> 
-    <app-id>999999991</app-id> 
-    <session-id>some_session_id</session-id> 
-    <title>bzdet</title> 
-    <amount>100</amount> 
-    <ts>1307964315</ts> 
-    <checksum>bc41ef603f420666a98821130a4c9013</checksum> 
-    <transaction-id>307663319</transaction-id> 
-    <status>accepted</status> 
-    <aux-data nil='true'></aux-data> 
-    <redirect-url>https://sandbox.psp-polska.pl/transaction/credit_card/preauth/307663319</redirect-url> 
+  VALID_PREAUTH_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>
+  <response>
+    <action>preauth</action>
+    <app-id>999999991</app-id>
+    <session-id>some_session_id</session-id>
+    <title>bzdet</title>
+    <amount>100</amount>
+    <ts>1307964315</ts>
+    <checksum>bc41ef603f420666a98821130a4c9013</checksum>
+    <transaction-id>307663319</transaction-id>
+    <status>accepted</status>
+    <aux-data nil='true'></aux-data>
+    <redirect-url>https://sandbox.psp-polska.pl/transaction/credit_card/preauth/307663319</redirect-url>
   </response>"
 
   VALID_GET_STATUS_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>
@@ -135,6 +135,22 @@ class ActiveSupport::TestCase
   	  <title>Recurring 706631045</title>
   	  <session-id>ses45011</session-id>
   </response>"
+
+  VALID_RECURRING_UPDATE_RESPONSE = "<?xml version='1.0'encoding='UTF-8'?>
+  <response>
+    <action>recurring_update</action>
+    <app-id>999999991</app-id>
+    <recurring-id>123456</recurring-id>
+    <ts>1306314732</ts>
+    <checksum>52bbcb10b2ec7ed4ba23fef175e3e2d3</checksum>
+    <status>active</status>
+    <amount>10.0</amount>
+    <currency>EUR</currency>
+    <title>Hosting</title>
+    <session-id>d01102550ecef3a1</session-id>
+    <aux-data></aux-data>
+  </response>
+  "
 
   VALID_CAPTURE_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>
   <response>
@@ -214,6 +230,8 @@ class ActiveSupport::TestCase
   VALID_RECURRING_STOP_REQUEST_PARAMS = {:action => "recurring_stop", :recurring_id => 777}
 
   VALID_RECURRING_STATUS_REQUEST_PARAMS = {:action => "recurring_status", :recurring_id => 1234}
+
+  VALID_RECURRING_UPDATE_REQUEST_PARAMS = VALID_SALE_REQUEST_PARAMS.merge(:recurring_id => 1234, :action => "recurring_update", :amount => 50)
 
   VALID_PREAUTH_REQUEST_PARAMS = VALID_SALE_REQUEST_PARAMS.merge(:action => "preauth")
 

@@ -7,7 +7,7 @@ module ActiveMerchant #:nodoc:
       self.default_currency = 'GBP'
       self.money_format = :cents
       self.supported_countries = ['HK', 'US', 'GB', 'AU']
-      self.supported_cardtypes = [:visa, :master, :american_express, :discover]
+      self.supported_cardtypes = [:visa, :master, :american_express, :discover, :jcb, :maestro]
       self.homepage_url = 'http://www.worldpay.com/'
       self.display_name = 'WorldPay'
 
@@ -27,7 +27,7 @@ module ActiveMerchant #:nodoc:
       def purchase(money, payment_method, options = {})
         response = MultiResponse.new
         response << authorize(money, payment_method, options)
-        response << capture(money, response.authorization, :authorization_validated => true) if response.success?
+        response << capture(money, response.authorization, options.merge(:authorization_validated => true)) if response.success?
         response
       end
 

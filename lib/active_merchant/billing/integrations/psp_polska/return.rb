@@ -12,7 +12,7 @@ module ActiveMerchant
           end
 
           def success?
-            return false unless valid? 
+            return false unless valid?
             if ["sale", "preauth"].include?(action)
               return true if status == "accepted"
             elsif ["get_status", "capture"].include?(action)
@@ -23,6 +23,8 @@ module ActiveMerchant
               raise StandardError, "success? method is not available for recurring_status. Pleasy use status method"
             elsif action == "recurring_stop"
               return true if status == "deactivated"
+            elsif action == "recurring_update"
+              return true if status == "recurring_update"
             else
               action_not_implemented_error
             end
@@ -56,13 +58,13 @@ module ActiveMerchant
           def last_successful_transaction
             params["last_successful_transaction"]
           end
- 
+
           def calculate_checksum
             if ["sale", "preauth", "recurring_start"].include?(action)
               Digest::MD5::hexdigest(params["app_id"] + params["session_id"] + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
             elsif ["get_status", "capture"].include?(action)
               Digest::MD5::hexdigest(params["app_id"] + params["transaction_id"] + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
-            elsif ["recurring_status", "recurring_stop"].include?(action)
+            elsif ["recurring_status", "recurring_stop","recurring_update"].include?(action)
               Digest::MD5::hexdigest(params["app_id"] + params["recurring_id"] + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
             else
               action_not_implemented_error
