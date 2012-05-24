@@ -4,11 +4,11 @@ require 'digest/md5'
 module ActiveMerchant #:nodoc:
   module Billing #:nodoc:
     module Integrations #:nodoc:
-      module PspPolska
+      module Espago
         class Notification < ActiveMerchant::Billing::Integrations::Notification
 
           def calculate_checksum
-            Digest::MD5::hexdigest(params["app_id"] + checksum_field + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
+            Digest::MD5::hexdigest(params["app_id"] + checksum_field + params["status"] + params["ts"] + EspagoConfig['key_response'])
           end
 
           def checksum_field
@@ -29,7 +29,7 @@ module ActiveMerchant #:nodoc:
               (action == "recurring_start" and status == "active") or
               (action == "recurring_stop" and status == "deactivated")
             false
-          end 
+          end
 
           def transaction_id
             params['transaction_id'] || params['recurring_id']
@@ -43,7 +43,7 @@ module ActiveMerchant #:nodoc:
             params['recurring_id']
           end
 
-          # When was this payment received by the client. 
+          # When was this payment received by the client.
           def received_at
             Time.at(params['ts'].to_i)
           end
@@ -73,24 +73,24 @@ module ActiveMerchant #:nodoc:
             ActiveMerchant::Billing::Base.integration_mode == :test
           end
 
-          # Acknowledge the transaction to PspPolska. This method has to be called after a new 
-          # apc arrives. PspPolska will verify that all the information we received are correct and will return a 
-          # ok or a fail. 
-          # 
+          # Acknowledge the transaction to Espago. This method has to be called after a new
+          # apc arrives. Espago will verify that all the information we received are correct and will return a
+          # ok or a fail.
+          #
           # Example:
-          # 
+          #
           #   def ipn
-          #     notify = PspPolskaNotification.new(request.raw_post)
+          #     notify = EspagoNotification.new(request.raw_post)
 
-          #     if notify.acknowledge 
+          #     if notify.acknowledge
           #       ... process order ... if notify.complete?
           #     else
           #       ... log possible hacking attempt ...
           #     end
-          def acknowledge      
-            request = PspPolskaRequest.new(acknowledge_request_options)
+          def acknowledge
+            request = EspagoRequest.new(acknowledge_request_options)
             res = request.send
-            ret = Return.new(res.body, :ip => IPSocket::getaddress(PspPolskaConfig['domain']))
+            ret = Return.new(res.body, :ip => IPSocket::getaddress(EspagoConfig['domain']))
             if ['capture', 'sale'].include?(self.action)
               ret.success?
             elsif ['recurring_start', 'recurring_stop'].include?(self.action)
@@ -103,7 +103,7 @@ module ActiveMerchant #:nodoc:
 
           # Take the posted xml data and move the relevant data into a hash
           def parse(post)
-            @params = Hash.from_xml(post)["response"].inject({}) {|h, (k, v)| h.merge(k => v.to_s)}  
+            @params = Hash.from_xml(post)["response"].inject({}) {|h, (k, v)| h.merge(k => v.to_s)}
           end
 
           def valid_checksum?
@@ -111,7 +111,7 @@ module ActiveMerchant #:nodoc:
           end
 
           def valid_app_id?
-            params["app_id"] == PspPolskaConfig["app_id"]
+            params["app_id"] == EspagoConfig["app_id"]
           end
 
           def acknowledge_request_options

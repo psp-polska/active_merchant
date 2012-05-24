@@ -2,27 +2,26 @@ require "digest/md5"
 require "net/http"
 require "net/https"
 
-PSP_POLSKA_SALE_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :session_id, :amount, :first_name, :last_name, :client_ip, :ts]
-PSP_POLSKA_STATUS_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :transaction_id, :ts]
-PSP_POLSKA_RECURRING_START_REQUEST_CHECKSUM_FIELDS = PSP_POLSKA_SALE_REQUEST_CHECKSUM_FIELDS
-PSP_POLSKA_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :recurring_id, :ts]
-PSP_POLSKA_RECURRING_STATUS_REQUEST_CHECKSUM_FIELDS = PSP_POLSKA_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS
-PSP_POLSKA_RECURRING_UPDATE_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :recurring_id, :ts]
-PSP_POLSKA_PREAUTH_REQUEST_CHECKSUM_FIELDS = PSP_POLSKA_SALE_REQUEST_CHECKSUM_FIELDS
-PSP_POLSKA_CAPTURE_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :transaction_id, :ts]
+ESPAGO_SALE_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :session_id, :amount, :first_name, :last_name, :client_ip, :ts]
+ESPAGO_STATUS_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :transaction_id, :ts]
+ESPAGO_RECURRING_START_REQUEST_CHECKSUM_FIELDS = ESPAGO_SALE_REQUEST_CHECKSUM_FIELDS
+ESPAGO_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :recurring_id, :ts]
+ESPAGO_RECURRING_STATUS_REQUEST_CHECKSUM_FIELDS = ESPAGO_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS
+ESPAGO_RECURRING_UPDATE_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :recurring_id, :ts]
+ESPAGO_PREAUTH_REQUEST_CHECKSUM_FIELDS = ESPAGO_SALE_REQUEST_CHECKSUM_FIELDS
+ESPAGO_CAPTURE_REQUEST_CHECKSUM_FIELDS = [:app_id, :action, :transaction_id, :ts]
 
 module ActiveMerchant
   module Billing
     module Integrations
-      module PspPolska
+      module Espago
 
-        class PspPolskaRequest
+        class EspagoRequest
 
           attr_accessor :params
 
           def initialize(options = {})
-            options[:password] ||= PspPolskaConfig['password']
-            options[:app_id] ||= PspPolskaConfig['app_id']
+            options[:app_id] ||= EspagoConfig['app_id']
             options[:ts] ||= Time.now.to_i
             set_type(options[:action])
             load_fields_info
@@ -34,27 +33,28 @@ module ActiveMerchant
           end
 
           def calculate_checksum
-            string = @checksum_fields.map{|field| @params[field]}.join + PspPolskaConfig['key_request']
+            string = @checksum_fields.map{|field| @params[field]}.join + EspagoConfig['key_request']
             params[:checksum] = Digest::MD5.hexdigest(string)
           end
 
           def to_xml
             calculate_checksum
-            @params.to_xml(:root => "request")
+            @params.delete_if { |key, value| key == 'app_id' }.to_xml(:root => "request")
           end
 
           def send
-            url = URI.parse(PspPolskaConfig['request_uri'])
+            url = URI.parse(EspagoConfig['request_uri'])
             http = Net::HTTP.new(url.host, url.port)
             http.use_ssl = true
             request = Net::HTTP::Post.new(url.path)
-            request.content_type = "application/xml"
+            request.content_type = "text/xml"
+            request.basic_auth EspagoConfig['app_id'], EspagoConfig['password']
             request.body = self.to_xml
             http.start{|http| http.request(request)}
           end
 
           def load_fields_info
-            checksum_fields_const_name = "PSP_POLSKA_" + @type.to_s.upcase + "_CHECKSUM_FIELDS"
+            checksum_fields_const_name = "ESPAGO_" + @type.to_s.upcase + "_CHECKSUM_FIELDS"
             if Object.const_defined?(checksum_fields_const_name)
               @checksum_fields = checksum_fields_const_name.constantize
             else

@@ -3,7 +3,7 @@ require "digest/md5"
 module ActiveMerchant
   module Billing
     module Integrations
-      module PspPolska
+      module Espago
 
         class Return < ActiveMerchant::Billing::Integrations::Return
 
@@ -61,11 +61,11 @@ module ActiveMerchant
 
           def calculate_checksum
             if ["sale", "preauth", "recurring_start"].include?(action)
-              Digest::MD5::hexdigest(params["app_id"] + params["session_id"] + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
+              Digest::MD5::hexdigest(params["app_id"] + params["session_id"] + params["status"] + params["ts"] + EspagoConfig['key_response'])
             elsif ["get_status", "capture"].include?(action)
-              Digest::MD5::hexdigest(params["app_id"] + params["transaction_id"] + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
+              Digest::MD5::hexdigest(params["app_id"] + params["transaction_id"] + params["status"] + params["ts"] + EspagoConfig['key_response'])
             elsif ["recurring_status", "recurring_stop","recurring_update"].include?(action)
-              Digest::MD5::hexdigest(params["app_id"] + params["recurring_id"] + params["status"] + params["ts"] + PspPolskaConfig['key_response'])
+              Digest::MD5::hexdigest(params["app_id"] + params["recurring_id"] + params["status"] + params["ts"] + EspagoConfig['key_response'])
             else
               action_not_implemented_error
             end
@@ -78,7 +78,7 @@ module ActiveMerchant
           end
 
           def valid_app_id?
-            params["app_id"] == PspPolskaConfig['app_id']
+            params["app_id"] == EspagoConfig['app_id']
           end
 
           def valid_checksum?
@@ -86,7 +86,7 @@ module ActiveMerchant
           end
 
           def valid_ip?
-            @options and @options[:ip] == PspPolskaConfig['ip']
+            @options and @options[:ip] == EspagoConfig['ip']
           end
 
           def action_not_implemented_error

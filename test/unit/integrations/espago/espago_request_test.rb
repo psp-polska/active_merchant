@@ -1,60 +1,60 @@
 require 'test_helper'
-require 'psp_polska_test_helper'
+require 'espago_test_helper'
 require 'digest/md5'
 
-class PspPolskaRequestTest < ActiveSupport::TestCase
-  include ActiveMerchant::Billing::Integrations::PspPolska
+class EspagoRequestTest < ActiveSupport::TestCase
+  include ActiveMerchant::Billing::Integrations::Espago
 
   def setup
     Time.stubs(:now).returns(555)
-    @sale_request = PspPolskaRequest.new(VALID_SALE_REQUEST_PARAMS)
-    @status_request = PspPolskaRequest.new(VALID_STATUS_REQUEST_PARAMS)
-    @recurring_start_request = PspPolskaRequest.new(VALID_RECURRING_START_REQUEST_PARAMS)
-    @recurring_stop_request = PspPolskaRequest.new(VALID_RECURRING_STOP_REQUEST_PARAMS)
-    @recurring_status_request = PspPolskaRequest.new(VALID_RECURRING_STATUS_REQUEST_PARAMS)
-    @recurring_update_request = PspPolskaRequest.new(VALID_RECURRING_UPDATE_REQUEST_PARAMS)
-    @preauth_request = PspPolskaRequest.new(VALID_PREAUTH_REQUEST_PARAMS)
-    @capture_request = PspPolskaRequest.new(VALID_CAPTURE_REQUEST_PARAMS)
+    @sale_request = EspagoRequest.new(VALID_SALE_REQUEST_PARAMS)
+    @status_request = EspagoRequest.new(VALID_STATUS_REQUEST_PARAMS)
+    @recurring_start_request = EspagoRequest.new(VALID_RECURRING_START_REQUEST_PARAMS)
+    @recurring_stop_request = EspagoRequest.new(VALID_RECURRING_STOP_REQUEST_PARAMS)
+    @recurring_status_request = EspagoRequest.new(VALID_RECURRING_STATUS_REQUEST_PARAMS)
+    @recurring_update_request = EspagoRequest.new(VALID_RECURRING_UPDATE_REQUEST_PARAMS)
+    @preauth_request = EspagoRequest.new(VALID_PREAUTH_REQUEST_PARAMS)
+    @capture_request = EspagoRequest.new(VALID_CAPTURE_REQUEST_PARAMS)
   end
 
   def test_params_after_initialize
     assert @sale_request.params.has_key?(:version)
-    PSP_POLSKA_SALE_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_SALE_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @sale_request.params.has_key?(key)
     end
     assert !@sale_request.params.has_key?(:fake)
     assert @status_request.params.has_key?(:version)
-    PSP_POLSKA_STATUS_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_STATUS_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @status_request.params.has_key?(key)
     end
     assert !@status_request.params.has_key?(:fake)
     assert @recurring_start_request.params.has_key?(:version)
-    PSP_POLSKA_RECURRING_START_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_RECURRING_START_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @recurring_start_request.params.has_key?(key)
     end
     assert !@recurring_start_request.params.has_key?(:fake)
     assert @recurring_stop_request.params.has_key?(:version)
-    PSP_POLSKA_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @recurring_stop_request.params.has_key?(key)
     end
     assert !@recurring_stop_request.params.has_key?(:fake)
     assert @recurring_status_request.params.has_key?(:version)
-    PSP_POLSKA_RECURRING_STATUS_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_RECURRING_STATUS_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @recurring_status_request.params.has_key?(key)
     end
     assert !@recurring_status_request.params.has_key?(:fake)
     assert @recurring_update_request.params.has_key?(:version)
-    PSP_POLSKA_RECURRING_UPDATE_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_RECURRING_UPDATE_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @recurring_update_request.params.has_key?(key)
     end
     assert !@recurring_update_request.params.has_key?(:fake)
     assert @preauth_request.params.has_key?(:version)
-    PSP_POLSKA_PREAUTH_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_PREAUTH_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @preauth_request.params.has_key?(key)
     end
     assert !@preauth_request.params.has_key?(:fake)
     assert @capture_request.params.has_key?(:version)
-    PSP_POLSKA_CAPTURE_REQUEST_CHECKSUM_FIELDS.each do |key|
+    ESPAGO_CAPTURE_REQUEST_CHECKSUM_FIELDS.each do |key|
       assert @capture_request.params.has_key?(key)
     end
     assert !@capture_request.params.has_key?(:fake)
@@ -80,13 +80,13 @@ class PspPolskaRequestTest < ActiveSupport::TestCase
   end
 
   def test_load_fields_info
-    assert_equal @sale_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_SALE_REQUEST_CHECKSUM_FIELDS
-    assert_equal @status_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_STATUS_REQUEST_CHECKSUM_FIELDS
-    assert_equal @recurring_start_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_RECURRING_START_REQUEST_CHECKSUM_FIELDS
-    assert_equal @recurring_stop_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS
-    assert_equal @recurring_status_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_RECURRING_STATUS_REQUEST_CHECKSUM_FIELDS
-    assert_equal @recurring_update_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_RECURRING_UPDATE_REQUEST_CHECKSUM_FIELDS
-    assert_equal @preauth_request.instance_variable_get(:@checksum_fields), PSP_POLSKA_PREAUTH_REQUEST_CHECKSUM_FIELDS
+    assert_equal @sale_request.instance_variable_get(:@checksum_fields), ESPAGO_SALE_REQUEST_CHECKSUM_FIELDS
+    assert_equal @status_request.instance_variable_get(:@checksum_fields), ESPAGO_STATUS_REQUEST_CHECKSUM_FIELDS
+    assert_equal @recurring_start_request.instance_variable_get(:@checksum_fields), ESPAGO_RECURRING_START_REQUEST_CHECKSUM_FIELDS
+    assert_equal @recurring_stop_request.instance_variable_get(:@checksum_fields), ESPAGO_RECURRING_STOP_REQUEST_CHECKSUM_FIELDS
+    assert_equal @recurring_status_request.instance_variable_get(:@checksum_fields), ESPAGO_RECURRING_STATUS_REQUEST_CHECKSUM_FIELDS
+    assert_equal @recurring_update_request.instance_variable_get(:@checksum_fields), ESPAGO_RECURRING_UPDATE_REQUEST_CHECKSUM_FIELDS
+    assert_equal @preauth_request.instance_variable_get(:@checksum_fields), ESPAGO_PREAUTH_REQUEST_CHECKSUM_FIELDS
   end
 
   def test_set_type

@@ -1,9 +1,9 @@
 require 'test_helper'
-require 'psp_polska_test_helper'
+require 'espago_test_helper'
 require 'digest/md5'
 
-class PspPolskaNotificationTest < ActiveSupport::TestCase
-  include ActiveMerchant::Billing::Integrations::PspPolska
+class EspagoNotificationTest < ActiveSupport::TestCase
+  include ActiveMerchant::Billing::Integrations::Espago
 
   def setup
     @sale = Notification.new(VALID_SALE)
@@ -39,11 +39,11 @@ class PspPolskaNotificationTest < ActiveSupport::TestCase
   end
 
   def test_valid_with_incorrect_app_id
-    @sale = Notification.new(VALID_SALE.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => PspPolskaConfig["ip"]})
-    @recurring_start = Notification.new(VALID_RECURRING_START.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => PspPolskaConfig["ip"]})
-    @recurring_stop = Notification.new(VALID_RECURRING_STOP.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => PspPolskaConfig["ip"]})
-    @preauth = Notification.new(VALID_PREAUTH.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => PspPolskaConfig["ip"]})
-    @capture = Notification.new(VALID_CAPTURE.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => PspPolskaConfig["ip"]})
+    @sale = Notification.new(VALID_SALE.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => EspagoConfig["ip"]})
+    @recurring_start = Notification.new(VALID_RECURRING_START.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => EspagoConfig["ip"]})
+    @recurring_stop = Notification.new(VALID_RECURRING_STOP.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => EspagoConfig["ip"]})
+    @preauth = Notification.new(VALID_PREAUTH.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => EspagoConfig["ip"]})
+    @capture = Notification.new(VALID_CAPTURE.gsub("<app-id>999999991</app-id>", "<app-id>incorrect</app-id>"), {:ip => EspagoConfig["ip"]})
     assert !@sale.valid?
     assert !@recurring_start.valid?
     assert !@recurring_stop.valid?
@@ -52,11 +52,11 @@ class PspPolskaNotificationTest < ActiveSupport::TestCase
   end
 
   def test_valid_with_incorrect_checksum
-    @sale = Notification.new(VALID_SALE.gsub("<checksum>64a0ac4a8f9899c89e11657122b3c39e</checksum>", "<checksum>incorrect</checksum>"), {:ip => PspPolskaConfig["ip"]})
-    @recurring_start = Notification.new(VALID_RECURRING_START.gsub("<checksum>02780b71c9da20d4448ba9c1cb25c6c1</checksum>", "<checksum>incorrect</checksum>"), {:ip => PspPolskaConfig["ip"]})
-    @recurring_stop = Notification.new(VALID_RECURRING_STOP.gsub("<checksum>3b72b67e8e9f059d94736b071bf10b8a</checksum>", "<checksum>incorrect</checksum>"), {:ip => PspPolskaConfig["ip"]})
-    @preauth = Notification.new(VALID_PREAUTH.gsub("<checksum>64a0ac4a8f9899c89e11657122b3c39e</checksum>", "<checksum>incorrect</checksum>"), {:ip => PspPolskaConfig["ip"]})
-    @capture = Notification.new(VALID_CAPTURE.gsub("<checksum>8ed193ba33b64676d2a663fd7e7beefc</checksum>", "<checksum>incorrect</checksum>"), {:ip => PspPolskaConfig["ip"]})
+    @sale = Notification.new(VALID_SALE.gsub("<checksum>64a0ac4a8f9899c89e11657122b3c39e</checksum>", "<checksum>incorrect</checksum>"), {:ip => EspagoConfig["ip"]})
+    @recurring_start = Notification.new(VALID_RECURRING_START.gsub("<checksum>02780b71c9da20d4448ba9c1cb25c6c1</checksum>", "<checksum>incorrect</checksum>"), {:ip => EspagoConfig["ip"]})
+    @recurring_stop = Notification.new(VALID_RECURRING_STOP.gsub("<checksum>3b72b67e8e9f059d94736b071bf10b8a</checksum>", "<checksum>incorrect</checksum>"), {:ip => EspagoConfig["ip"]})
+    @preauth = Notification.new(VALID_PREAUTH.gsub("<checksum>64a0ac4a8f9899c89e11657122b3c39e</checksum>", "<checksum>incorrect</checksum>"), {:ip => EspagoConfig["ip"]})
+    @capture = Notification.new(VALID_CAPTURE.gsub("<checksum>8ed193ba33b64676d2a663fd7e7beefc</checksum>", "<checksum>incorrect</checksum>"), {:ip => EspagoConfig["ip"]})
     assert !@sale.valid?
     assert !@recurring_start.valid?
     assert !@recurring_stop.valid?
@@ -100,7 +100,7 @@ class PspPolskaNotificationTest < ActiveSupport::TestCase
 
   def test_accessors
     assert_equal "approved", @sale.status
-    assert_equal "639923858", @sale.transaction_id 
+    assert_equal "639923858", @sale.transaction_id
     assert_equal 100, @sale.gross_cents
     assert_equal "1.00", @sale.gross
     assert_equal "EUR", @sale.currency
@@ -112,7 +112,7 @@ class PspPolskaNotificationTest < ActiveSupport::TestCase
     assert_equal "1.25", @recurring_start.gross
     assert_equal "PLN", @recurring_start.currency
     assert_equal Time.at("1306248938".to_i), @recurring_start.received_at
-    assert_equal "recurring_start", @recurring_start.action 
+    assert_equal "recurring_start", @recurring_start.action
     assert_equal "deactivated", @recurring_stop.status
     assert_equal "12345", @recurring_stop.transaction_id
     assert_equal 125, @recurring_stop.gross_cents
@@ -121,7 +121,7 @@ class PspPolskaNotificationTest < ActiveSupport::TestCase
     assert_equal Time.at("098765".to_i), @recurring_stop.received_at
     assert_equal "recurring_stop", @recurring_stop.action
     assert_equal "approved", @preauth.status
-    assert_equal "639923858", @preauth.transaction_id 
+    assert_equal "639923858", @preauth.transaction_id
     assert_equal 100, @preauth.gross_cents
     assert_equal "1.00", @preauth.gross
     assert_equal "EUR", @preauth.currency

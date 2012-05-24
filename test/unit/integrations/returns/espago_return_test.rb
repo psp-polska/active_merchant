@@ -1,8 +1,8 @@
 require 'test_helper'
-require 'psp_polska_test_helper'
+require 'espago_test_helper'
 
-class PspPolskaReturnTest < ActiveSupport::TestCase
-  include ActiveMerchant::Billing::Integrations::PspPolska
+class EspagoReturnTest < ActiveSupport::TestCase
+  include ActiveMerchant::Billing::Integrations::Espago
 
   def test_empty_response_should_not_create_valid_return
     r = Return.new("<response><node></node></response>")
@@ -10,21 +10,21 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
   end
 
   def test_valid_response_should_create_valid_return
-    sale = Return.new(VALID_SALE_RESPONSE, :ip => PspPolskaConfig["ip"])
+    sale = Return.new(VALID_SALE_RESPONSE, :ip => EspagoConfig["ip"])
     assert sale.valid?
-    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => PspPolskaConfig["ip"])
+    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
     assert get_status.valid?
-    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => EspagoConfig["ip"])
     assert recurring_start.valid?
-    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
     assert recurring_status.valid?
-    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE, :ip => EspagoConfig["ip"])
     assert recurring_update.valid?
-    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => PspPolskaConfig["ip"])
+    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => EspagoConfig["ip"])
     assert preauth.valid?
-    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => PspPolskaConfig["ip"])
+    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => EspagoConfig["ip"])
     assert capture.valid?
-    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => EspagoConfig["ip"])
     assert recurring_stop.valid?
   end
 
@@ -86,49 +86,49 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
   end
 
   def test_success?
-    sale = Return.new(VALID_SALE_RESPONSE, :ip => PspPolskaConfig["ip"])
+    sale = Return.new(VALID_SALE_RESPONSE, :ip => EspagoConfig["ip"])
     assert sale.success?
     sale = Return.new(
       VALID_SALE_RESPONSE.gsub("<status>accepted</status>", "<status>declined</status>"),
-      :ip => PspPolskaConfig["ip"])
+      :ip => EspagoConfig["ip"])
     sale.stubs(:valid?).returns(true)
     assert !sale.success?
-    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => PspPolskaConfig["ip"])
+    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
     assert get_status.success?
     get_status = Return.new(
       VALID_GET_STATUS_RESPONSE.gsub("<status>approved</status>", "<status>accepted</status>"),
-      :ip => PspPolskaConfig["ip"])
+      :ip => EspagoConfig["ip"])
     get_status.stubs(:valid?).returns(true)
     assert !get_status.success?
-    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => EspagoConfig["ip"])
     assert recurring_start.success?
     recurring_start = Return.new(
       VALID_RECURRING_START_RESPONSE.gsub("<status>new</status>", "<status>declined</status>"),
-      :ip => PspPolskaConfig["ip"]
+      :ip => EspagoConfig["ip"]
     )
     recurring_start.stubs(:valid?).returns(true)
     assert !recurring_start.success?
-    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
     assert_raise(StandardError) { recurring_status.success? }
-    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => PspPolskaConfig["ip"])
+    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => EspagoConfig["ip"])
     assert preauth.success?
     preauth = Return.new(
       VALID_PREAUTH_RESPONSE.gsub("<status>accepted</status>", "<status>declined</status>"),
-      :ip => PspPolskaConfig["ip"])
+      :ip => EspagoConfig["ip"])
     preauth.stubs(:valid?).returns(true)
     assert !preauth.success?
-    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => PspPolskaConfig["ip"])
+    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => EspagoConfig["ip"])
     assert capture.success?
     capture = Return.new(
       VALID_CAPTURE_RESPONSE.gsub("<status>approved</status>", "<status>declined</status>"),
-      :ip => PspPolskaConfig["ip"])
+      :ip => EspagoConfig["ip"])
     capture.stubs(:valid?).returns(true)
     assert !capture.success?
-    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => PspPolskaConfig["ip"])
+    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => EspagoConfig["ip"])
     assert recurring_stop.success?
     recurring_stop = Return.new(
       VALID_RECURRING_STOP_RESPONSE.gsub("<status>deactivated</status>", "<status>active</status>"),
-      :ip => PspPolskaConfig["ip"]
+      :ip => EspagoConfig["ip"]
     )
     recurring_stop.stubs(:valid? => true)
     assert !recurring_stop.success?
@@ -136,15 +136,15 @@ class PspPolskaReturnTest < ActiveSupport::TestCase
 
   def test_redirect_url
     sale = Return.new(VALID_SALE_RESPONSE)
-    assert_equal sale.redirect_url, "https://sandbox.psp-polska.pl/transaction/credit_card/sale/639923858"
+    assert_equal sale.redirect_url, "https://sandbox.espago.com/en/transactions/639923858"
     get_status = Return.new(VALID_GET_STATUS_RESPONSE)
     assert_equal get_status.redirect_url, nil
     recurring_start = Return.new(VALID_RECURRING_START_RESPONSE)
-    assert_equal recurring_start.redirect_url, "https://sandbox.psp-polska.pl/transaction/credit_card/recurring/764714872"
+    assert_equal recurring_start.redirect_url, "https://sandbox.espago.com/en/transactions/764714872"
     recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE)
     assert_equal recurring_status.redirect_url, nil
     preauth = Return.new(VALID_PREAUTH_RESPONSE)
-    assert_equal preauth.redirect_url, "https://sandbox.psp-polska.pl/transaction/credit_card/preauth/307663319"
+    assert_equal preauth.redirect_url, "https://sandbox.espago.com/en/transactions/307663319"
     capture = Return.new(VALID_CAPTURE_RESPONSE)
     assert_equal capture.redirect_url, nil
   end

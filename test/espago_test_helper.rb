@@ -1,9 +1,9 @@
-PspPolskaConfig = YAML.load_file(File.join(File.dirname(__FILE__), "psp_polska.yml"))
+EspagoConfig = YAML.load_file(File.join(File.dirname(__FILE__), "espago.yml"))
 
 class ActiveSupport::TestCase
 
 
-  def psp_polska_test_data
+  def espago_test_data
     output_hash = {
       :sale => {
         :session_id => sale_session_id = SecureRandom.hex(10),
@@ -53,7 +53,7 @@ class ActiveSupport::TestCase
     <checksum>808f379ca6e0082150174edca987210b</checksum>
     <ts>1303297377</ts>
     <aux-data nil='true'></aux-data>
-    <redirect-url>https://sandbox.psp-polska.pl/transaction/credit_card/sale/639923858</redirect-url>
+    <redirect-url>https://sandbox.espago.com/en/transactions/639923858</redirect-url>
   </response>"
 
   VALID_PREAUTH_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>
@@ -68,7 +68,7 @@ class ActiveSupport::TestCase
     <transaction-id>307663319</transaction-id>
     <status>accepted</status>
     <aux-data nil='true'></aux-data>
-    <redirect-url>https://sandbox.psp-polska.pl/transaction/credit_card/preauth/307663319</redirect-url>
+    <redirect-url>https://sandbox.espago.com/en/transactions/307663319</redirect-url>
   </response>"
 
   VALID_GET_STATUS_RESPONSE = "<?xml version='1.0' encoding='UTF-8'?>
@@ -98,7 +98,7 @@ class ActiveSupport::TestCase
     <checksum>61487d2b77d3a3d5a3f116d30561705f</checksum>
     <recurring-id>716629090</recurring-id>
     <status>new</status>
-    <redirect-url>https://sandbox.psp-polska.pl/transaction/credit_card/recurring/764714872</redirect-url>
+    <redirect-url>https://sandbox.espago.com/en/transactions/764714872</redirect-url>
   </response>"
 
   VALID_RECURRING_STATUS_RESPONSE = "<?xml version='1.0' endcoding='UTF-8'?>
