@@ -10,7 +10,7 @@ class ActiveSupport::TestCase
         :request => {
           :action => 'sale',
           :amount => 100,
-          :currency => 'EUR',
+          :currency => 'PLN',
           :title => "Title #{sale_session_id}",
           :session_id => sale_session_id,
           :email => 'email@example.com',
