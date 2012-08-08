@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'espago_test_helper'
 
-EspagoConfig = YAML.load_file(File.join(File.dirname(__FILE__), "../../espago_remote.yml"))
+$espago_config = YAML.load_file(File.join(File.dirname(__FILE__), "../../espago_remote.yml"))
 
 class RemoteEspagoIntegrationTest < ActiveSupport::TestCase
   include ActiveMerchant::Billing::Integrations::Espago
@@ -68,7 +68,7 @@ class RemoteEspagoIntegrationTest < ActiveSupport::TestCase
 
   def basic_setup
     @response = @request.send
-    @return = Return.new(@response.body, :ip => EspagoConfig["ip"])
+    @return = Return.new(@response.body, :ip => $espago_config["ip"])
   end
 
 end

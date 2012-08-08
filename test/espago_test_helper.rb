@@ -1,4 +1,4 @@
-EspagoConfig = YAML.load_file(File.join(File.dirname(__FILE__), "espago.yml"))
+$espago_config = YAML.load_file(File.join(File.dirname(__FILE__), "espago.yml"))
 
 class ActiveSupport::TestCase
 

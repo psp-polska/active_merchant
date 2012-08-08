@@ -21,7 +21,7 @@ module ActiveMerchant
           attr_accessor :params
 
           def initialize(options = {})
-            options[:app_id] ||= EspagoConfig['app_id']
+            options[:app_id] ||= $espago_config['app_id']
             options[:ts] ||= Time.now.to_i
             set_type(options[:action])
             load_fields_info
@@ -33,7 +33,7 @@ module ActiveMerchant
           end
 
           def calculate_checksum
-            string = @checksum_fields.map{|field| @params[field]}.join + EspagoConfig['key_request']
+            string = @checksum_fields.map{|field| @params[field]}.join + $espago_config['key_request']
             params[:checksum] = Digest::MD5.hexdigest(string)
           end
 
@@ -43,12 +43,12 @@ module ActiveMerchant
           end
 
           def send
-            url = URI.parse(EspagoConfig['request_uri'])
+            url = URI.parse($espago_config['request_uri'])
             http = Net::HTTP.new(url.host, url.port)
             http.use_ssl = true
             request = Net::HTTP::Post.new(url.path)
             request.content_type = "text/xml"
-            request.basic_auth EspagoConfig['app_id'], EspagoConfig['password']
+            request.basic_auth $espago_config['app_id'], $espago_config['password']
             request.body = self.to_xml
             http.start{|http| http.request(request)}
           end

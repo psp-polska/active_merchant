@@ -10,21 +10,21 @@ class EspagoReturnTest < ActiveSupport::TestCase
   end
 
   def test_valid_response_should_create_valid_return
-    sale = Return.new(VALID_SALE_RESPONSE, :ip => EspagoConfig["ip"])
+    sale = Return.new(VALID_SALE_RESPONSE, :ip => $espago_config["ip"])
     assert sale.valid?
-    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
+    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => $espago_config["ip"])
     assert get_status.valid?
-    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => $espago_config["ip"])
     assert recurring_start.valid?
-    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => $espago_config["ip"])
     assert recurring_status.valid?
-    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE, :ip => $espago_config["ip"])
     assert recurring_update.valid?
-    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => EspagoConfig["ip"])
+    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => $espago_config["ip"])
     assert preauth.valid?
-    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => EspagoConfig["ip"])
+    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => $espago_config["ip"])
     assert capture.valid?
-    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => $espago_config["ip"])
     assert recurring_stop.valid?
   end
 
@@ -86,49 +86,49 @@ class EspagoReturnTest < ActiveSupport::TestCase
   end
 
   def test_success?
-    sale = Return.new(VALID_SALE_RESPONSE, :ip => EspagoConfig["ip"])
+    sale = Return.new(VALID_SALE_RESPONSE, :ip => $espago_config["ip"])
     assert sale.success?
     sale = Return.new(
       VALID_SALE_RESPONSE.gsub("<status>accepted</status>", "<status>declined</status>"),
-      :ip => EspagoConfig["ip"])
+      :ip => $espago_config["ip"])
     sale.stubs(:valid?).returns(true)
     assert !sale.success?
-    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
+    get_status = Return.new(VALID_GET_STATUS_RESPONSE, :ip => $espago_config["ip"])
     assert get_status.success?
     get_status = Return.new(
       VALID_GET_STATUS_RESPONSE.gsub("<status>approved</status>", "<status>accepted</status>"),
-      :ip => EspagoConfig["ip"])
+      :ip => $espago_config["ip"])
     get_status.stubs(:valid?).returns(true)
     assert !get_status.success?
-    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_start = Return.new(VALID_RECURRING_START_RESPONSE, :ip => $espago_config["ip"])
     assert recurring_start.success?
     recurring_start = Return.new(
       VALID_RECURRING_START_RESPONSE.gsub("<status>new</status>", "<status>declined</status>"),
-      :ip => EspagoConfig["ip"]
+      :ip => $espago_config["ip"]
     )
     recurring_start.stubs(:valid?).returns(true)
     assert !recurring_start.success?
-    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE, :ip => $espago_config["ip"])
     assert_raise(StandardError) { recurring_status.success? }
-    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => EspagoConfig["ip"])
+    preauth = Return.new(VALID_PREAUTH_RESPONSE, :ip => $espago_config["ip"])
     assert preauth.success?
     preauth = Return.new(
       VALID_PREAUTH_RESPONSE.gsub("<status>accepted</status>", "<status>declined</status>"),
-      :ip => EspagoConfig["ip"])
+      :ip => $espago_config["ip"])
     preauth.stubs(:valid?).returns(true)
     assert !preauth.success?
-    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => EspagoConfig["ip"])
+    capture = Return.new(VALID_CAPTURE_RESPONSE, :ip => $espago_config["ip"])
     assert capture.success?
     capture = Return.new(
       VALID_CAPTURE_RESPONSE.gsub("<status>approved</status>", "<status>declined</status>"),
-      :ip => EspagoConfig["ip"])
+      :ip => $espago_config["ip"])
     capture.stubs(:valid?).returns(true)
     assert !capture.success?
-    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => EspagoConfig["ip"])
+    recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE, :ip => $espago_config["ip"])
     assert recurring_stop.success?
     recurring_stop = Return.new(
       VALID_RECURRING_STOP_RESPONSE.gsub("<status>deactivated</status>", "<status>active</status>"),
-      :ip => EspagoConfig["ip"]
+      :ip => $espago_config["ip"]
     )
     recurring_stop.stubs(:valid? => true)
     assert !recurring_stop.success?

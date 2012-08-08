@@ -8,7 +8,7 @@ module ActiveMerchant #:nodoc:
         class Notification < ActiveMerchant::Billing::Integrations::Notification
 
           def calculate_checksum
-            Digest::MD5::hexdigest(params["app_id"] + checksum_field + params["status"] + params["ts"] + EspagoConfig['key_response'])
+            Digest::MD5::hexdigest(params["app_id"] + checksum_field + params["status"] + params["ts"] + $espago_config['key_response'])
           end
 
           def checksum_field
@@ -90,7 +90,7 @@ module ActiveMerchant #:nodoc:
           def acknowledge
             request = EspagoRequest.new(acknowledge_request_options)
             res = request.send
-            ret = Return.new(res.body, :ip => IPSocket::getaddress(EspagoConfig['domain']))
+            ret = Return.new(res.body, :ip => IPSocket::getaddress($espago_config['domain']))
             if ['capture', 'sale'].include?(self.action)
               ret.success?
             elsif ['recurring_start', 'recurring_stop'].include?(self.action)
@@ -111,7 +111,7 @@ module ActiveMerchant #:nodoc:
           end
 
           def valid_app_id?
-            params["app_id"] == EspagoConfig["app_id"]
+            params["app_id"] == $espago_config["app_id"]
           end
 
           def acknowledge_request_options
