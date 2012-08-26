@@ -68,21 +68,21 @@ class EspagoReturnTest < ActiveSupport::TestCase
 
   def test_calculate_checksum
     sale = Return.new(VALID_SALE_RESPONSE)
-    assert_equal sale.calculate_checksum, Digest::MD5.hexdigest("999999991some_session_idaccepted1303297377TestResponse1")
+    assert_equal sale.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '639923858' + 'accepted' + '1303297377' + $espago_config['key_response'])
     get_status = Return.new(VALID_GET_STATUS_RESPONSE)
-    assert_equal get_status.calculate_checksum, Digest::MD5.hexdigest("999999991725411585approved1304589448TestResponse1")
+    assert_equal get_status.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '725411585' + 'approved' + '1304589448' + $espago_config['key_response'])
     recurring_start = Return.new(VALID_RECURRING_START_RESPONSE)
-    assert_equal recurring_start.calculate_checksum, Digest::MD5.hexdigest("999999991some_session_idnew1305781394TestResponse1")
+    assert_equal recurring_start.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '716629090' + 'new' + '1305781394' + $espago_config['key_response'])
     recurring_status = Return.new(VALID_RECURRING_STATUS_RESPONSE)
-    assert_equal recurring_status.calculate_checksum, Digest::MD5.hexdigest("9999999911234active5678TestResponse1")
+    assert_equal recurring_status.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '1234' + 'active' + '5678' + $espago_config['key_response'])
     recurring_update = Return.new(VALID_RECURRING_UPDATE_RESPONSE)
-    assert_equal recurring_update.calculate_checksum, Digest::MD5.hexdigest("999999991123456active1306314732TestResponse1")
+    assert_equal recurring_update.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '123456' + 'active' + '1306314732' + $espago_config['key_response'])
     preauth = Return.new(VALID_PREAUTH_RESPONSE)
-    assert_equal preauth.calculate_checksum, Digest::MD5.hexdigest("999999991some_session_idaccepted1307964315TestResponse1")
+    assert_equal preauth.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '307663319' + 'accepted' + '1307964315' + $espago_config['key_response'])
     capture = Return.new(VALID_CAPTURE_RESPONSE)
-    assert_equal capture.calculate_checksum, Digest::MD5.hexdigest("999999991286708751approved1308045951TestResponse1")
+    assert_equal capture.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '286708751' + 'approved' + '1308045951' + $espago_config['key_response'])
     recurring_stop = Return.new(VALID_RECURRING_STOP_RESPONSE)
-    assert_equal recurring_stop.calculate_checksum, Digest::MD5.hexdigest("999999991123456deactivated1306314732TestResponse1")
+    assert_equal recurring_stop.calculate_checksum, Digest::MD5.hexdigest($espago_config['app_id'] + '123456' + 'deactivated' + '1306314732' + $espago_config['key_response'])
   end
 
   def test_success?

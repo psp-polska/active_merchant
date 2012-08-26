@@ -60,11 +60,9 @@ module ActiveMerchant
           end
 
           def calculate_checksum
-            if ["sale", "preauth", "recurring_start"].include?(action)
-              Digest::MD5::hexdigest(params["app_id"] + params["session_id"] + params["status"] + params["ts"] + $espago_config['key_response'])
-            elsif ["get_status", "capture"].include?(action)
+            if ["sale", "preauth", "get_status", "capture"].include?(action)
               Digest::MD5::hexdigest(params["app_id"] + params["transaction_id"] + params["status"] + params["ts"] + $espago_config['key_response'])
-            elsif ["recurring_status", "recurring_stop","recurring_update"].include?(action)
+            elsif ["recurring_start", "recurring_status", "recurring_stop","recurring_update"].include?(action)
               Digest::MD5::hexdigest(params["app_id"] + params["recurring_id"] + params["status"] + params["ts"] + $espago_config['key_response'])
             else
               action_not_implemented_error

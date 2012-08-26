@@ -50,7 +50,7 @@ class ActiveSupport::TestCase
     <amount>100</amount>
     <transaction-id>639923858</transaction-id>
     <status>accepted</status>
-    <checksum>808f379ca6e0082150174edca987210b</checksum>
+    <checksum>#{Digest::MD5::hexdigest($espago_config['app_id'] + '639923858' + 'accepted' + '1303297377' + $espago_config['key_response'])}</checksum>
     <ts>1303297377</ts>
     <aux-data nil='true'></aux-data>
     <redirect-url>https://sandbox.espago.com/en/transactions/639923858</redirect-url>
@@ -64,7 +64,7 @@ class ActiveSupport::TestCase
     <title>bzdet</title>
     <amount>100</amount>
     <ts>1307964315</ts>
-    <checksum>bc41ef603f420666a98821130a4c9013</checksum>
+    <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '307663319' + 'accepted' + '1307964315' + $espago_config['key_response'])}</checksum>
     <transaction-id>307663319</transaction-id>
     <status>accepted</status>
     <aux-data nil='true'></aux-data>
@@ -77,7 +77,7 @@ class ActiveSupport::TestCase
     <app-id>999999991</app-id>
     <transaction-id>725411585</transaction-id>
     <ts>1304589448</ts>
-    <checksum>0d41f732303735c9dfffadf410e1466b</checksum>
+    <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '725411585' + 'approved' + '1304589448' + $espago_config['key_response'])}</checksum>
     <amount>1000</amount>
     <currency>EUR</currency>
     <title>Transaction 725411585</title>
@@ -95,7 +95,7 @@ class ActiveSupport::TestCase
     <title>bzdet</title>
     <amount>100</amount>
     <ts>1305781394</ts>
-    <checksum>61487d2b77d3a3d5a3f116d30561705f</checksum>
+    <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '716629090' + 'new' + '1305781394' + $espago_config['key_response'])}</checksum>
     <recurring-id>716629090</recurring-id>
     <status>new</status>
     <redirect-url>https://sandbox.espago.com/en/transactions/764714872</redirect-url>
@@ -107,7 +107,7 @@ class ActiveSupport::TestCase
     <app-id>999999991</app-id>
     <recurring-id>1234</recurring-id>
     <ts>5678</ts>
-    <checksum>69186a5a9be12c2fa3e31612c7eb3dc9</checksum>
+    <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '1234' + 'active' + '5678' + $espago_config['key_response'])}</checksum>
     <amount>125</amount>
     <currency>PLN</currency>
     <title>Something</title>
@@ -128,7 +128,7 @@ class ActiveSupport::TestCase
   	  <app-id>999999991</app-id>
   	  <recurring-id>123456</recurring-id>
   	  <ts>1306314732</ts>
-  	  <checksum>3d1829d96b9dd8a53baf20bf55996b4e</checksum>
+  	  <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '123456' + 'deactivated' + '1306314732' + $espago_config['key_response'])}</checksum>
   	  <status>deactivated</status>
   	  <amount>1000.0</amount>
   	  <currency>PLN</currency>
@@ -142,7 +142,7 @@ class ActiveSupport::TestCase
     <app-id>999999991</app-id>
     <recurring-id>123456</recurring-id>
     <ts>1306314732</ts>
-    <checksum>52bbcb10b2ec7ed4ba23fef175e3e2d3</checksum>
+    <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '123456' + 'active' + '1306314732' + $espago_config['key_response'])}</checksum>
     <status>active</status>
     <amount>10.0</amount>
     <currency>EUR</currency>
@@ -158,7 +158,7 @@ class ActiveSupport::TestCase
     <app-id>999999991</app-id>
     <transaction-id>286708751</transaction-id>
     <ts>1308045951</ts>
-    <checksum>8ed193ba33b64676d2a663fd7e7beefc</checksum>
+    <checksum>#{Digest::MD5.hexdigest($espago_config['app_id'] + '286708751' + 'approved' + '1308045951' + $espago_config['key_response'])}</checksum>
     <status>approved</status>
   </response>"
 
